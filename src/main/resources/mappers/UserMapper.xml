@@ -18,16 +18,7 @@
   <sql id="Base_Column_List" >
     id, username, password, email, phone, question, answer, role, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    from mmall_user
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from mmall_user
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+
   <insert id="insert" parameterType="com.mmall.pojo.User" >
     insert into mmall_user (id, username, password, 
       email, phone, question, 
@@ -148,7 +139,75 @@
       answer = #{answer,jdbcType=VARCHAR},
       role = #{role,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      now()
+      update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <update id="updatePasswordByUsername" parameterType="map">
+    UPDATE mmall_user
+    SET password = ${passwordNew}, update_time=now()
+    where username = ${username}
+  </update>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from mmall_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <select id="checkUsername" resultType="int" parameterType="String">
+    SELECT  COUNT(1) FROM mmall_user
+    WHERE username = #{username}
+  </select>
+
+  <select id="checkEmail" resultType="int" parameterType="String">
+    SELECT  COUNT(1) FROM mmall_user
+    WHERE email = #{email}
+  </select>
+
+  <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM mmall_user
+    WHERE username = #{username}
+    and password = #{password}
+  </select>
+
+  <select id="selectQuestionByUsername" resultType="String" parameterType="String">
+    SELECT
+    question
+    FROM mmall_user
+    WHERE username = #{username}
+  </select>
+
+  <select id="checkAnswer" resultType="int" parameterType="map">
+    SELECT
+    count(1)
+    from mmall_user
+    where username=#{username}
+    and question = #{question}
+    and answer = #{answer}
+  </select>
+
+  <select id="checkPassword" resultType="int" parameterType="map">
+    SELECT
+    count(1)
+    from mmall_user
+    where password = #{password}
+    and id = #{userId}
+  </select>
+
+  <select id="checkEmailByUserId" resultType="int" parameterType="map">
+    SELECT  COUNT(1) FROM mmall_user
+    WHERE email = #{email}
+    and id != ${userId}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from mmall_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
 </mapper>
